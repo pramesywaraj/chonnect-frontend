@@ -1,25 +1,74 @@
-import js from '@eslint/js';
-import { typescript } from '@vue/eslint-config-typescript';
-import vue from 'eslint-plugin-vue';
-import prettier from '@vue/eslint-config-prettier';
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import pluginVue from 'eslint-plugin-vue';
+import prettier from 'eslint-plugin-prettier/recommended';
+import vueConfigTypescript from '@vue/eslint-config-typescript';
+import vueConfigPrettier from '@vue/eslint-config-prettier';
 
 export default [
-  js.configs.recommended,
-
-  ...typescript({
-    files: ['**/*.ts', '**/*.vue'],
-    vue: true,
-  }),
-
   {
-    plugins: {
-      vue,
-    },
-    rules: {
-      ...vue.configs['vue3-recommended'].rules,
-      'vue/multi-word-component-names': 'off',
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
     },
   },
-
-  ...prettier()
+  // js
+  pluginJs.configs.recommended,
+  {
+    rules: {
+      'no-unused-vars': 'off',
+      'no-undef': 'off',
+    },
+  },
+  // ts
+  ...tseslint.configs.recommended,
+  {
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+    },
+  },
+  // vue
+  ...pluginVue.configs['flat/recommended'],
+  {
+    files: ['*.vue', '**/*.vue'],
+    languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+      },
+    },
+  },
+  {
+    rules: {
+      ...vueConfigTypescript.rules,
+      ...vueConfigPrettier.rules,
+      'prettier/prettier': [
+        'warn',
+        {
+          singleQuote: true,
+        },
+      ],
+      'vue/multi-word-component-names': 'off',
+      'vue/attribute-hyphenation': 'off',
+      'vue/no-v-html': 'off',
+      'vue/v-on-event-hyphenation': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      'semi': ['error', 'always']
+    },
+  },
+  {
+    ignores: ['node_modules', '.nuxt', '.output', 'dist'],
+  },
+  // prettier
+  prettier,
+  {
+    rules: {
+      'prettier/prettier': ['warn', { singleQuote: true }],
+    },
+  },
 ];

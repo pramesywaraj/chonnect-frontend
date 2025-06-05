@@ -8,4 +8,4 @@ const app = createApp(App);
 
 app.use(routes);
 
-createApp(App).mount('#app');
+app.mount('#app');

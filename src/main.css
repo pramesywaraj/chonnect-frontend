@@ -6,17 +6,16 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Plus Jakarta Sans", "sans-serif";
+  --font-display: "Plus Jakarta Sans", 'sans-serif';
 
-  --color-primary: "#6366f1";
-  --color-secondary: "#A5B4FC";
-  --color-background: "#F9FAFB";
-  --color-white: "#FFFFFF";
-  --color-text-primary: "#111827";
-  --color-text-secondary: "#6B7280";
-  --color-border: "#E5E7EB";
-  --color-danger: "EF4444";
-  --color-success: "#22C55E";
+  --color-primary: #6366f1;
+  --color-secondary: #A5B4FC;
+  --color-background: #F9FAFB;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+  --color-border: #E5E7EB;
+  --color-danger: #EF4444;
+  --color-success: #22C55E;
 
   --bg-default: var(--color-background);
 

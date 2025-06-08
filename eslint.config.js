@@ -1,59 +1,52 @@
-import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
-import tseslint from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
-import eslintPluginVue from 'eslint-plugin-vue';
-import prettier from 'eslint-config-prettier';
-
-const compat = new FlatCompat({
-  baseDirectory: import.meta.dirname,
-  recommendedConfig: js.configs.recommended,
-});
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import prettierPlugin from 'eslint-plugin-prettier';
+import vuePlugin from 'eslint-plugin-vue';
+import globals from 'globals';
 
 export default [
-  ...compat.extends('eslint:recommended'),
+  // Base ESLint recommended config
   {
-    files: ['*.ts', '*.tsx'],
+    ...js.configs.recommended,
     languageOptions: {
-      parser: tsParser,
+      globals: {
+        ...globals.browser,
+        ...globals.node
+      },
+      parser: '@typescript-eslint/parser',
       parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: 'module',
         project: './tsconfig.json',
-      },
-    },
+        extraFileExtensions: ['.vue']
+      }
+    }
+  },
+
+  // Vue.js configuration
+  {
+    files: ['**/*.vue'],
+    ...vuePlugin.configs['flat/recommended']
+  },
+  
+  // TypeScript configuration
+  {
+    files: ['**/*.ts', '**/*.vue'],
+    ...tsPlugin.configs['recommended-type-checked']
+  },
+
+  {
     plugins: {
-      '@typescript-eslint': tseslint,
+      prettier: prettierPlugin,
     },
     rules: {
-      ...tseslint?.configs?.recommended?.rules ?? {},
-      semi: ['error', 'always'],
-      'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': ['warn'],
+      'prettier/prettier': ['error', {
+        semi: true,
+        singleQuote: true,
+        printWidth: 120,
+        tabWidth: 2,
+        trailingComma: 'none',
+        arrowParens: 'avoid',
+        bracketSpacing: true
+      }],
     },
   },
-  {
-    files: ['*.vue'],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: 'module',
-        extraFileExtensions: ['.vue'],
-      },
-    },
-    plugins: {
-      vue: eslintPluginVue,
-    },
-    rules: {
-      ...eslintPluginVue?.configs['vue3-recommended']?.rules ?? {},
-      semi: ['error', 'always'],
-      'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': ['warn'],
-    },
-  },
-  {
-    ignores: ['node_modules/*', 'dist/*', 'coverage/*'],
-  },
-  prettier, // turns off rules that conflict with Prettier
 ];

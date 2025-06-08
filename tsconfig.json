@@ -3,23 +3,26 @@
     "target": "ESNext",
     "module": "ESNext",
     "baseUrl": "./",
-    "moduleResolution": "bundler",
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
       "@views/*": ["src/views/*"]
     },
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
     "strict": true,
-    "skipLibCheck": true,
-    "types": ["vite/client"],
-    "useDefineForClassFields": true,
     "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vite/client"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "isolatedModules": true,
-    "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true
   },
-  "exclude": ["node_modules", "dist"],
-  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

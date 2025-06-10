@@ -8,8 +8,8 @@
     </div>
 
     <div class="flex flex-col justify-center gap-2.5">
-      <Button variant="primary" tag="button" @click="goToLogin">Login</Button>
-      <Button variant="secondary" @click="goToRegister">Register</Button>
+      <Button variant="primary" tag="button" @click="goToLogin"> Login </Button>
+      <Button variant="secondary" @click="goToRegister"> Register </Button>
     </div>
   </div>
 </template>
@@ -18,10 +18,10 @@
 import Button from '@components/Button/index.vue';
 
 const goToLogin = () => {
-  console.log("This button go to login");
-}
+  console.log('Check');
+};
 
 const goToRegister = () => {
-  console.log("This button go to register");
-}
+  console.log('This button go to register');
+};
 </script>

@@ -15,12 +15,12 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
-      '@views': path.resolve(__dirname, './src/views'),
+      '@views': path.resolve(__dirname, './src/views')
     },
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
   },
   server: {
     host: true,
-    port: 6969,
+    port: 6969
   }
-})
+});

@@ -1,23 +1,76 @@
 <script setup lang="ts">
-import { Field, ErrorMessage } from 'vee-validate';
-import { type Component } from 'vue';
+import { useField, ErrorMessage } from 'vee-validate';
+import { computed, type Component } from 'vue';
 
-interface TextInputProps {
-  name: string;
-  fieldClass?: string;
-  labelClass?: string;
-  label?: string;
-  type?: 'text' | 'email';
-  inputType?: 'input' | 'textarea';
-  placeholder?: string;
-  icon?: {
-    component: Component;
-    size?: number;
-    class?: string;
-  } | null;
-}
+const props = defineProps({
+  // only use when wrapped in a form
+  name: {
+    type: String,
+    required: true
+  },
+  // for standalone use
+  modelValue: {
+    type: String,
+    default: undefined
+  },
+  // common props
+  fieldClass: {
+    type: String,
+    default: ''
+  },
+  label: {
+    type: String,
+    default: ''
+  },
+  labelClass: {
+    type: String,
+    default: ''
+  },
+  dengerMessageClass: {
+    type: String,
+    default: ''
+  },
+  type: {
+    type: String as () => 'text' | 'email',
+    default: 'text'
+  },
+  placeholder: {
+    type: String,
+    default: ''
+  },
+  icon: {
+    type: Object as () => {
+      component: Component;
+      size?: number;
+      class?: string;
+    } | null,
+    default: null
+  }
+});
 
-defineProps<TextInputProps>();
+const emit = defineEmits<{
+  'update:modelValue': [value: string];
+  submit: [value: string];
+}>();
+
+const {
+  value: formValue,
+  handleChange,
+  handleBlur
+} = useField(props.name, undefined, {
+  initialValue: props.modelValue
+});
+
+const inputValue = computed({
+  get: () => (props.name ? formValue.value : props.modelValue),
+  set: (value: string) => {
+    if (props.name) {
+      handleChange(value);
+    } else {
+      emit('update:modelValue', value);
+    }
+  }
+});
 </script>
 
 <template>
@@ -37,16 +90,16 @@ defineProps<TextInputProps>();
         weight="bold"
       />
 
-      <Field
+      <input
         :id="name"
-        :name="name"
+        v-model="inputValue"
         :type="type"
-        :as="inputType"
         :placeholder="placeholder"
         :class="['w-full bg-transparent text-text-secondary focus:outline-none placeholder:italic', fieldClass]"
+        @blur="handleBlur"
       />
     </div>
 
-    <ErrorMessage :name="name" class="text-red-500 text-sm mt-1" />
+    <ErrorMessage :name="name" :class="['text-danger text-sm mt-1', dengerMessageClass]" />
   </div>
 </template>

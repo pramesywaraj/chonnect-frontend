@@ -1,22 +1,48 @@
 <script setup lang="ts">
-import { Field, ErrorMessage } from 'vee-validate';
+import { ErrorMessage, useField } from 'vee-validate';
 import { ref, type Component } from 'vue';
 import { PhEye, PhEyeSlash } from '@phosphor-icons/vue';
 
-interface TextInputProps {
-  name: string;
-  fieldClass?: string;
-  labelClass?: string;
-  label?: string;
-  placeholder?: string;
-  icon?: {
-    component: Component;
-    size?: number;
-    class?: string;
-  } | null;
-}
+const props = defineProps({
+  name: {
+    type: String,
+    required: true
+  },
+  fieldClass: {
+    type: String,
+    default: ''
+  },
+  label: {
+    type: String,
+    default: ''
+  },
+  labelClass: {
+    type: String,
+    default: ''
+  },
+  dengerMessageClass: {
+    type: String,
+    default: ''
+  },
+  type: {
+    type: String as () => 'text' | 'email',
+    default: 'text'
+  },
+  placeholder: {
+    type: String,
+    default: ''
+  },
+  icon: {
+    type: Object as () => {
+      component: Component;
+      size?: number;
+      class?: string;
+    } | null,
+    default: null
+  }
+});
 
-defineProps<TextInputProps>();
+const { value } = useField(() => props.name);
 
 const isShow = ref(false);
 
@@ -40,9 +66,9 @@ const toggleShowPassword = () => (isShow.value = !isShow.value);
         weight="bold"
       />
 
-      <Field
+      <input
         :id="name"
-        :name="name"
+        v-model="value"
         :type="isShow ? 'text' : 'password'"
         :placeholder="placeholder"
         :class="['w-full bg-transparent text-text-secondary focus:outline-none placeholder:italic', fieldClass]"
@@ -53,6 +79,6 @@ const toggleShowPassword = () => (isShow.value = !isShow.value);
       </button>
     </div>
 
-    <ErrorMessage :name="name" class="text-red-500 text-sm mt-1" />
+    <ErrorMessage :name="name" :class="['text-danger text-sm mt-1', dengerMessageClass]" />
   </div>
 </template>

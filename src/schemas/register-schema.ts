@@ -2,7 +2,7 @@ import * as yup from 'yup';
 
 const passwordRules = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>/?]).{6,}$/;
 
-export const registerSchema = yup.object({
+const registerSchema = yup.object({
   name: yup.string().required('Name is required!'),
   email: yup.string().email('Invalid email').required('Email is required!'),
   password: yup
@@ -17,3 +17,5 @@ export const registerSchema = yup.object({
     .required('You must confirm your password first')
     .oneOf([yup.ref('password')], 'Password not confirmed')
 });
+
+export default registerSchema;

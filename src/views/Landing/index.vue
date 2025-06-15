@@ -16,12 +16,15 @@
 
 <script lang="ts" setup>
 import Button from '@components/Button/index.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const goToLogin = () => {
-  console.log('Check');
+  router.push('/login');
 };
 
 const goToRegister = () => {
-  console.log('This button go to register');
+  router.push('/register');
 };
 </script>

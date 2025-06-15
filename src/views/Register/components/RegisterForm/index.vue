@@ -3,7 +3,7 @@ import { TextInput, PasswordInput } from '@components/Inputs';
 import { PhLock, PhAt, PhUser } from '@phosphor-icons/vue';
 import { useForm } from 'vee-validate';
 
-import { registerSchema } from '@/schemas/register-schema';
+import { registerSchema } from '@/schemas';
 import Button from '@components/Button/index.vue';
 
 interface RegisterFormValues {

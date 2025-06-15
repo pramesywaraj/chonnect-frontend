@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { RouterLink } from 'vue-router';
+
 import RegisterForm from './components/RegisterForm/index.vue';
 </script>
 
@@ -12,6 +14,10 @@ import RegisterForm from './components/RegisterForm/index.vue';
         <p>Register to connect with others, cheers!</p>
       </div>
       <RegisterForm />
+    </div>
+
+    <div class="flex justify-center">
+      <p class="text-white">Already have an account? <RouterLink to="/login">Login 👋</RouterLink></p>
     </div>
   </div>
 </template>

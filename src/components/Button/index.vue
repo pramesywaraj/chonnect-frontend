@@ -6,11 +6,13 @@ const props = withDefaults(
     tag?: 'button' | 'a' | 'RouterLink';
     variant?: 'primary' | 'secondary';
     type?: 'submit' | 'button' | 'reset';
+    className?: string;
   }>(),
   {
     tag: 'button',
     variant: 'primary',
-    type: 'button'
+    type: 'button',
+    className: ''
   }
 );
 const attrs = useAttrs();
@@ -36,7 +38,7 @@ const variantClass =
   <component
     :is="tag"
     v-bind="mergedAttrs"
-    :class="['inline-flex justify-center px-4 py-2 rounded cursor-pointer', variantClass]"
+    :class="['inline-flex justify-center px-4 py-2 rounded cursor-pointer', variantClass, className]"
   >
     <slot />
   </component>

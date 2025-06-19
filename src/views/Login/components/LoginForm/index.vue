@@ -4,7 +4,7 @@ import { PhLock, PhAt } from '@phosphor-icons/vue';
 import { useForm } from 'vee-validate';
 
 import { loginSchema } from '@/schemas';
-import Button from '@components/Button/index.vue';
+import { RegularButton } from '@components/Buttons';
 
 interface LoginFormValues {
   email: string;
@@ -39,6 +39,6 @@ const onSubmit = handleSubmit((values: any) => {
         component: PhLock
       }"
     />
-    <Button tag="button" variant="secondary" type="submit">Login</Button>
+    <RegularButton tag="button" variant="secondary" type="submit">Login</RegularButton>
   </form>
 </template>

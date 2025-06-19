@@ -8,14 +8,14 @@
     </div>
 
     <div class="flex flex-col justify-center gap-2.5">
-      <Button variant="primary" tag="button" @click="goToLogin"> Login </Button>
-      <Button variant="secondary" @click="goToRegister"> Register </Button>
+      <RegularButton variant="primary" tag="button" @click="goToLogin"> Login </RegularButton>
+      <RegularButton variant="secondary" @click="goToRegister"> Register </RegularButton>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import Button from '@components/Button/index.vue';
+import { RegularButton } from '@components/Buttons';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();

@@ -7,12 +7,14 @@ const props = withDefaults(
     variant?: 'primary' | 'secondary';
     type?: 'submit' | 'button' | 'reset';
     className?: string;
+    noHover?: boolean;
   }>(),
   {
     tag: 'button',
     variant: 'primary',
     type: 'button',
-    className: ''
+    className: '',
+    noHover: false
   }
 );
 const attrs = useAttrs();
@@ -30,8 +32,12 @@ const mergedAttrs = computed(() => {
 
 const variantClass =
   props.variant === 'primary'
-    ? 'bg-primary text-white hover:bg-primary/90'
-    : 'border border-primary text-primary bg-white hover:bg-white/50';
+    ? props.noHover
+      ? 'bg-primary text-white'
+      : 'bg-primary text-white hover:bg-primary/90'
+    : props.noHover
+      ? 'border border-primary text-primary bg-white'
+      : 'border border-primary text-primary bg-white hover:bg-white/50';
 </script>
 
 <template>

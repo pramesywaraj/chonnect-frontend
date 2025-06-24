@@ -16,7 +16,7 @@ const rooms = ref<Room[]>(mockRooms);
 const router = useRouter();
 
 const onNavigateToProfile = () => {
-  console.log('onNavigateToProfile');
+  router.push('/profile');
 };
 
 const onNavigateToSearchChat = () => {

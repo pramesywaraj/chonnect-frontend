@@ -25,6 +25,23 @@ const routes: Array<RouteRecordRaw> = [
     path: '/search',
     name: 'Search',
     component: () => import('@views/Search/index.vue')
+  },
+  {
+    path: '/profile',
+    name: 'CurrentUserProfile',
+    component: () => import('@views/Profile/index.vue'),
+    children: [
+      {
+        path: '/profile/user/:userId',
+        name: 'UserProfile',
+        component: () => import('@views/Profile/index.vue')
+      },
+      {
+        path: '/profile/group/:groupId',
+        name: 'GroupProfile',
+        component: () => import('@views/Profile/index.vue')
+      }
+    ]
   }
 ];
 

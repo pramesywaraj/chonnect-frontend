@@ -6,7 +6,7 @@ const props = defineProps({
   // only use when wrapped in a form
   name: {
     type: String,
-    required: true
+    default: undefined
   },
   // for standalone use
   modelValue: {
@@ -15,6 +15,10 @@ const props = defineProps({
   },
   // common props
   fieldClass: {
+    type: String,
+    default: ''
+  },
+  wrapperClass: {
     type: String,
     default: ''
   },
@@ -57,7 +61,7 @@ const {
   value: formValue,
   handleChange,
   handleBlur
-} = useField(props.name, undefined, {
+} = useField(props?.name ?? '', undefined, {
   initialValue: props.modelValue
 });
 
@@ -80,7 +84,10 @@ const inputValue = computed({
     </label>
 
     <div
-      class="flex items-center gap-3 px-3 py-2 rounded-md shadow-sm focus-within:ring-2 focus-within:ring-primary bg-white"
+      :class="[
+        'flex items-center gap-3 px-3 py-2 rounded-md shadow-sm focus-within:ring-2 focus-within:ring-primary bg-white',
+        wrapperClass
+      ]"
     >
       <component
         :is="icon?.component"
@@ -100,6 +107,6 @@ const inputValue = computed({
       />
     </div>
 
-    <ErrorMessage :name="name" :class="['text-danger text-sm mt-1', dengerMessageClass]" />
+    <ErrorMessage v-if="!!name" :name="name" :class="['text-danger text-sm mt-1', dengerMessageClass]" />
   </div>
 </template>

@@ -15,7 +15,10 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
-      '@views': path.resolve(__dirname, './src/views')
+      '@views': path.resolve(__dirname, './src/views'),
+      '@composables': path.resolve(__dirname, './src/composables'),
+      '@types': path.resolve(__dirname, './src/types'),
+      '@schemas': path.resolve(__dirname, './src/schemas')
     },
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
   },

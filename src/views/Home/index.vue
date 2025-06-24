@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { PhChatCircleDots, PhUserCircle } from '@phosphor-icons/vue';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { IconedButton } from '@components/Buttons';
 import Navbar from '@components/Navbar/index.vue';
@@ -12,13 +13,14 @@ import ChatList from './components/ChatList/index.vue';
 import { mockRooms } from './__mock__';
 
 const rooms = ref<Room[]>(mockRooms);
+const router = useRouter();
 
 const onNavigateToProfile = () => {
   console.log('onNavigateToProfile');
 };
 
 const onNavigateToSearchChat = () => {
-  console.log('onNavigateToSearchChat');
+  router.push('/search');
 };
 </script>
 

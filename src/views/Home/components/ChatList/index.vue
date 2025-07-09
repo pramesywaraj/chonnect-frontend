@@ -5,6 +5,7 @@ import ChatCard from '../ChatCard/index.vue';
 
 interface Props {
   rooms: Room[];
+  onNavigateToRoom: (room: Room) => void;
 }
 
 defineProps<Props>();
@@ -12,6 +13,6 @@ defineProps<Props>();
 
 <template>
   <div class="flex flex-col p-4 gap-6">
-    <ChatCard v-for="room in rooms" :key="room.id" :room="room" />
+    <ChatCard v-for="room in rooms" :key="room.id" :room="room" :on-navigate-to-room="onNavigateToRoom" />
   </div>
 </template>

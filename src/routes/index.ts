@@ -42,6 +42,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@views/Profile/index.vue')
       }
     ]
+  },
+  {
+    path: '/room/:roomId',
+    name: 'Room',
+    component: () => import('@views/Room/index.vue')
   }
 ];
 

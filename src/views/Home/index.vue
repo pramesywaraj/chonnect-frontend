@@ -22,6 +22,10 @@ const onNavigateToProfile = () => {
 const onNavigateToSearchChat = () => {
   router.push('/search');
 };
+
+const onNavigateToRoom = (room: Room) => {
+  router.push(`/room/${room.id}`);
+};
 </script>
 
 <template>
@@ -39,6 +43,6 @@ const onNavigateToSearchChat = () => {
       </template>
     </Navbar>
     <EmptyState v-if="rooms.length === 0" />
-    <ChatList v-else :rooms="rooms" />
+    <ChatList v-else :rooms="rooms" :on-navigate-to-room="onNavigateToRoom" />
   </div>
 </template>

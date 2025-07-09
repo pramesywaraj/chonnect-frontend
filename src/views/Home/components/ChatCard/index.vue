@@ -11,6 +11,7 @@ import { Room } from '@/types/room';
 
 interface Props {
   room: Room;
+  onNavigateToRoom: (room: Room) => void;
 }
 
 dayjs.extend(isToday);
@@ -41,7 +42,7 @@ const latestMessageTime = computed(() => {
 </script>
 
 <template>
-  <div class="flex gap-3 cursor-pointer">
+  <div class="flex gap-3 cursor-pointer" @click="onNavigateToRoom(room)">
     <ProfileImage :name="roomName" :image-url="latestMessage?.sender?.profile_image" />
     <div class="flex flex-auto flex-col justify-between">
       <p class="font-semibold text-primary">{{ roomName }}</p>

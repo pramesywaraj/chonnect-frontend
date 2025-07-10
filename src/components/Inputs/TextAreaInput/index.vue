@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useField, ErrorMessage } from 'vee-validate';
-import { computed, type Component } from 'vue';
+import { ref, computed, nextTick, onMounted, watch, type Component } from 'vue';
 
 const props = defineProps({
   // only use when wrapped in a form
@@ -34,7 +34,7 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  dengerMessageClass: {
+  dangerMessageClass: {
     type: String,
     default: ''
   },
@@ -53,8 +53,18 @@ const props = defineProps({
       class?: string;
     } | null,
     default: null
+  },
+  initialHeight: {
+    type: Number,
+    default: 40
+  },
+  maxHeight: {
+    type: Number,
+    default: 160
   }
 });
+
+const textAreaRef = ref<HTMLTextAreaElement | null>(null);
 
 const emit = defineEmits<{
   'update:modelValue': [value: string];
@@ -79,6 +89,25 @@ const inputValue = computed({
     }
   }
 });
+
+const autoResize = () => {
+  if (textAreaRef.value) {
+    textAreaRef.value.style.height = `${props.initialHeight}px`;
+    textAreaRef.value.style.height = Math.min(textAreaRef.value.scrollHeight, props.maxHeight) + 'px';
+  }
+};
+
+onMounted(() => {
+  nextTick(() => {
+    autoResize();
+  });
+});
+
+watch(inputValue, () => {
+  nextTick(() => {
+    autoResize();
+  });
+});
 </script>
 
 <template>
@@ -101,16 +130,22 @@ const inputValue = computed({
         weight="bold"
       />
 
-      <input
+      <textarea
         :id="name"
+        ref="textAreaRef"
         v-model="inputValue"
         :type="type"
         :placeholder="placeholder"
-        :class="['w-full bg-transparent text-text-secondary focus:outline-none placeholder:italic', fieldClass]"
+        :class="[
+          'resize-none w-full bg-transparent text-text-secondary focus:outline-none placeholder:italic',
+          fieldClass
+        ]"
+        :style="{ height: initialHeight }"
         @blur="handleBlur"
+        @input="autoResize"
       />
     </div>
 
-    <ErrorMessage v-if="!!name" :name="name" :class="['text-danger text-sm mt-1', dengerMessageClass]" />
+    <ErrorMessage v-if="!!name" :name="name" :class="['text-danger text-sm mt-1', dangerMessageClass]" />
   </div>
 </template>

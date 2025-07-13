@@ -2,6 +2,86 @@ import { Message, MessageStatusEnum } from '@/types/message';
 
 export default [
   {
+    id: '3dee3764-7d0f-497b-a524-b4e09839a33d',
+    content: 'I beg you an apology',
+    sender: {
+      id: '73e4624c-0573-4720-96c8-1b7b55c8e418',
+      name: 'Partner B',
+      profile_image: null
+    },
+    statuses: [
+      {
+        name: MessageStatusEnum.SENT
+      }
+    ],
+    is_user_message: false,
+    created_at: '2025-07-13T05:57:41.899Z'
+  },
+  {
+    id: '9ad04ade-04a3-46e0-ac6f-ee5fefddcf63',
+    content: "I supposed to haven't to do that",
+    sender: {
+      id: '73e4624c-0573-4720-96c8-1b7b55c8e418',
+      name: 'Partner B',
+      profile_image: null
+    },
+    statuses: [
+      {
+        name: MessageStatusEnum.SENT
+      }
+    ],
+    is_user_message: false,
+    created_at: '2025-07-13T05:57:32.202Z'
+  },
+  {
+    id: '09f1d4d2-b3ec-40ee-96bd-eb1ce4419a12',
+    content: "I'm sorry",
+    sender: {
+      id: '73e4624c-0573-4720-96c8-1b7b55c8e418',
+      name: 'Partner B',
+      profile_image: null
+    },
+    statuses: [
+      {
+        name: MessageStatusEnum.SENT
+      }
+    ],
+    is_user_message: false,
+    created_at: '2025-07-13T05:57:15.957Z'
+  },
+  {
+    id: '04e89960-ece5-47e9-bb41-32c29a34317c',
+    content: 'I....',
+    sender: {
+      id: '73e4624c-0573-4720-96c8-1b7b55c8e418',
+      name: 'Partner B',
+      profile_image: null
+    },
+    statuses: [
+      {
+        name: MessageStatusEnum.SENT
+      }
+    ],
+    is_user_message: false,
+    created_at: '2025-07-13T05:57:09.144Z'
+  },
+  {
+    id: '95759262-c392-4800-a6c8-335a333dcb4f',
+    content: "You wickeeddd! Why you didn't answer my question?",
+    sender: {
+      id: '49cdfbdc-c1fe-4ece-a235-4a25890c8a31',
+      name: 'Partner A',
+      profile_image: null
+    },
+    statuses: [
+      {
+        name: MessageStatusEnum.SENT
+      }
+    ],
+    is_user_message: true,
+    created_at: '2025-07-13T05:56:28.042Z'
+  },
+  {
     id: 'f8f266b4-ce08-4e3b-8227-c0aefc363ebc',
     content: 'My father has died long time ago, why you claim as him... you....',
     sender: {

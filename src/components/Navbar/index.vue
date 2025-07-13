@@ -9,12 +9,14 @@ interface NavbarProps {
   rightContent?: Component | null;
   isEnableBackButton?: boolean;
   onClickBackButton?: () => void;
+  onClickNavbar?: () => void;
 }
 
 withDefaults(defineProps<NavbarProps>(), {
   rightContent: null,
   isEnableBackButton: false,
-  onClickBackButton: () => {}
+  onClickBackButton: () => {},
+  onClickNavbar: () => {}
 });
 
 const slots = useSlots();
@@ -30,7 +32,9 @@ const hasRightContent = computed(() => !!slots['right-content']);
         @click="onClickBackButton"
       />
     </div>
-    <h2 class="text-white flex-1">{{ title }}</h2>
+    <div :class="['flex-1', !!onClickNavbar ? 'cursor-pointer' : '']" @click="onClickNavbar">
+      <h2 class="text-white">{{ title }}</h2>
+    </div>
     <div v-if="hasRightContent" class="flex justify-between items-center gap-3">
       <slot name="right-content" />
     </div>

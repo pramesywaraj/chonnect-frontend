@@ -3,6 +3,6 @@ export interface User {
   name: string;
   email: string;
   description?: string;
-  profile_image?: string;
+  profile_image?: string | null;
   joined_at: string;
 }

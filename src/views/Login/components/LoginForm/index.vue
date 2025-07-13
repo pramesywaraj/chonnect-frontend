@@ -5,18 +5,23 @@ import { useForm } from 'vee-validate';
 
 import { loginSchema } from '@/schemas';
 import { RegularButton } from '@components/Buttons';
+import { ILoginRequest } from '@/types/auth';
 
-interface LoginFormValues {
-  email: string;
-  password: string;
+interface Props {
+  isLoading: boolean;
+  onSubmitLogin: (payload: ILoginRequest) => void;
 }
+
+const props = defineProps<Props>();
 
 const { handleSubmit } = useForm({
   validationSchema: loginSchema
 });
 
 const onSubmit = handleSubmit((values: any) => {
-  const formValues = values as LoginFormValues;
+  const formValues = values as ILoginRequest;
+
+  props.onSubmitLogin(formValues);
 });
 </script>
 
@@ -39,6 +44,6 @@ const onSubmit = handleSubmit((values: any) => {
         component: PhLock
       }"
     />
-    <RegularButton tag="button" variant="secondary" type="submit">Login</RegularButton>
+    <RegularButton :loading="isLoading" tag="button" variant="secondary" type="submit">Login</RegularButton>
   </form>
 </template>

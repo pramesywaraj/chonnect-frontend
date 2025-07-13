@@ -1,4 +1,4 @@
-import axios, { AxiosHeaders, type InternalAxiosRequestConfig, type AxiosResponse } from 'axios';
+import axios, { AxiosHeaders, type InternalAxiosRequestConfig, type AxiosResponse, type AxiosError } from 'axios';
 import { env } from '@/constants/env';
 
 const api = axios.create({
@@ -28,8 +28,8 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response: AxiosResponse) => response,
-  async error => {
-    return Promise.reject(error);
+  async (error: AxiosError) => {
+    return Promise.reject(error.response?.data);
   }
 );
 

@@ -1,71 +1,90 @@
 import { useMutation } from '@tanstack/vue-query';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import type { ILoginRequest, ILoginResponse } from '@/types/auth';
-import { login } from '@/api/auth';
+import type { ILoginRequest, ILoginResponse, IRegisterRequest, IRegisterResponse } from '@/types/auth';
+import { login, register } from '@/api/auth';
 import API_ROUTES from '@/constants/api-routes';
-import { ISuccessResponse } from '@/types/api-response';
-import { User } from '@/types/user';
+import { useUserStore } from '@/stores/user';
 
-const settedUser = ref<User | null>(null);
+import { useFetchProfile } from './useUser';
+
+const userStore = useUserStore();
 
 export const useLogin = () => {
   const errorMessage = ref('');
   const router = useRouter();
+  const isProfileLoading = ref(false);
+
+  const { refetch: fetchUserProfile } = useFetchProfile({ enabled: false });
 
   const onLoginUser = (payload: ILoginRequest) => {
     mutation.mutate(payload);
   };
 
-  const onLoginSuccess = () => {
-    router.replace('/');
+  const onLoginSuccess = async (access_token: string, refresh_token: string) => {
+    isProfileLoading.value = true;
+
+    try {
+      const { data: profile } = await fetchUserProfile();
+      if (!profile) throw new Error('User not found, please regist first');
+
+      userStore.setAccessToken(access_token);
+      userStore.setRefreshToken(refresh_token);
+      userStore.setUser(profile);
+
+      router.replace('/');
+    } catch (err: any) {
+      errorMessage.value = err?.message || err?.response?.data?.message || 'Failed to fetch user profile after login.';
+    } finally {
+      isProfileLoading.value = false;
+    }
   };
 
-  const mutation = useMutation<ISuccessResponse<ILoginResponse>, Error, ILoginRequest>({
+  const mutation = useMutation<ILoginResponse, Error, ILoginRequest>({
     mutationFn: login,
-    onSuccess: data => {
-      const response = data.data;
-
-      localStorage.setItem('access_token', response.access_token);
-      localStorage.setItem('refresh_token', response.refresh_token);
-
-      onLoginSuccess();
-    },
+    onSuccess: data => onLoginSuccess(data.access_token, data.refresh_token),
     onError: error => {
       errorMessage.value = error?.message || `Error occured when hit ${API_ROUTES.AUTH.LOGIN}`;
     }
   });
 
+  const isLoading = computed(() => mutation.isPending.value || isProfileLoading.value);
+
   return {
     onLoginUser,
-    isLoading: mutation.isPending,
+    isLoading,
     isError: mutation.isError,
     errorMessage
   };
 };
 
-export const useUser = () => {
-  const setUser = (user: User) => {
-    settedUser.value = user;
-    localStorage.setItem('user', JSON.stringify(user));
+export const useRegister = () => {
+  const errorMessage = ref('');
+  const router = useRouter();
+
+  const onRegistUser = (payload: IRegisterRequest) => {
+    mutation.mutate(payload);
   };
 
-  const getUser = () => {
-    const storedUser = localStorage.getItem('user');
-
-    if (storedUser) settedUser.value = JSON.parse(storedUser);
+  const onRegistSuccess = () => {
+    router.replace('/login');
   };
 
-  const clearUser = () => {
-    settedUser.value = null;
-    localStorage.removeItem('user');
-  };
+  const mutation = useMutation<IRegisterResponse, Error, IRegisterRequest>({
+    mutationFn: register,
+    onSuccess: () => {
+      onRegistSuccess();
+    },
+    onError: error => {
+      errorMessage.value = error?.message || `Error occured when hit ${API_ROUTES.AUTH.REGISTER}`;
+    }
+  });
 
   return {
-    user: settedUser,
-    setUser,
-    getUser,
-    clearUser
+    onRegistUser,
+    isLoading: mutation.isPending,
+    isError: mutation.isError,
+    errorMessage
   };
 };

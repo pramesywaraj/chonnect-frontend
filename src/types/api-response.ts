@@ -5,10 +5,11 @@ export interface ISuccessResponse<T> {
   success: boolean;
 }
 
-export interface IErrorResponse<T> {
-  errors: T;
+export interface IErrorResponse {
+  errors: string[];
   message: string;
   path: string;
   timestamp: string;
   title: string;
+  status_code: number;
 }

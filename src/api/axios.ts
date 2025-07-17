@@ -10,7 +10,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (!config.headers) config.headers = new AxiosHeaders();
 
     if (token) {

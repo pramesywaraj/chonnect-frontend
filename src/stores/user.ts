@@ -29,5 +29,9 @@ export const useUserStore = defineStore('user', {
       this.refresh_token = null;
     }
   },
+  getters: {
+    accessToken: state => state.access_token,
+    refreshToken: state => state.refresh_token
+  },
   persist: true
 });

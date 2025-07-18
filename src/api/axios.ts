@@ -1,5 +1,7 @@
 import axios, { AxiosHeaders, type InternalAxiosRequestConfig, type AxiosResponse, type AxiosError } from 'axios';
+
 import { env } from '@/constants/env';
+import { useUserStore } from '@/stores/user';
 
 const api = axios.create({
   baseURL: env.VITE_API_BASE_URL,
@@ -10,14 +12,16 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('access_token');
+    const userStore = useUserStore();
+    const accessToken = userStore.accessToken;
+
     if (!config.headers) config.headers = new AxiosHeaders();
 
-    if (token) {
+    if (accessToken) {
       if (typeof config.headers.set === 'function') {
-        config.headers.set('Authorization', `Bearer ${token}`);
+        config.headers.set('Authorization', `Bearer ${accessToken}`);
       } else {
-        (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+        (config.headers as Record<string, string>)['Authorization'] = `Bearer ${accessToken}`;
       }
     }
 

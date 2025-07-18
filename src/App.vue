@@ -4,8 +4,12 @@
       <RouterView />
     </div>
   </div>
+
+  <Notification />
 </template>
 
 <script lang="ts" setup>
 import { RouterView } from 'vue-router';
+
+import Notification from '@/components/Notification/index.vue';
 </script>

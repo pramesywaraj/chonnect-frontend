@@ -6,13 +6,14 @@ import type { ILoginRequest, ILoginResponse, IRegisterRequest, IRegisterResponse
 import { login, register } from '@/api/auth';
 import API_ROUTES from '@/constants/api-routes';
 import { useUserStore } from '@/stores/user';
+import { useNotificationStore, NotificationTypeEnum } from '@/stores/notification';
 
 import { useFetchProfile } from './useUser';
 
 const userStore = useUserStore();
+const notificationStore = useNotificationStore();
 
 export const useLogin = () => {
-  const errorMessage = ref('');
   const router = useRouter();
   const isProfileLoading = ref(false);
 
@@ -22,20 +23,19 @@ export const useLogin = () => {
     mutation.mutate(payload);
   };
 
-  const onLoginSuccess = async (access_token: string, refresh_token: string) => {
+  const onLoginSuccess = async () => {
     isProfileLoading.value = true;
 
     try {
       const { data: profile } = await fetchUserProfile();
       if (!profile) throw new Error('User not found, please regist first');
 
-      userStore.setAccessToken(access_token);
-      userStore.setRefreshToken(refresh_token);
       userStore.setUser(profile);
 
       router.replace('/');
     } catch (err: any) {
-      errorMessage.value = err?.message || err?.response?.data?.message || 'Failed to fetch user profile after login.';
+      const message = err?.message || err?.response?.data?.message || 'Failed to fetch user profile after login.';
+      notificationStore.showMessage(message, NotificationTypeEnum.ERROR);
     } finally {
       isProfileLoading.value = false;
     }
@@ -43,9 +43,15 @@ export const useLogin = () => {
 
   const mutation = useMutation<ILoginResponse, Error, ILoginRequest>({
     mutationFn: login,
-    onSuccess: data => onLoginSuccess(data.access_token, data.refresh_token),
+    onSuccess: data => {
+      userStore.setAccessToken(data.access_token);
+      userStore.setRefreshToken(data.refresh_token);
+
+      onLoginSuccess();
+    },
     onError: error => {
-      errorMessage.value = error?.message || `Error occured when hit ${API_ROUTES.AUTH.LOGIN}`;
+      const message = error?.message || `Error occured when hit ${API_ROUTES.AUTH.LOGIN}`;
+      notificationStore.showMessage(message, NotificationTypeEnum.ERROR);
     }
   });
 
@@ -54,13 +60,11 @@ export const useLogin = () => {
   return {
     onLoginUser,
     isLoading,
-    isError: mutation.isError,
-    errorMessage
+    isError: mutation.isError
   };
 };
 
 export const useRegister = () => {
-  const errorMessage = ref('');
   const router = useRouter();
 
   const onRegistUser = (payload: IRegisterRequest) => {
@@ -68,6 +72,10 @@ export const useRegister = () => {
   };
 
   const onRegistSuccess = () => {
+    notificationStore.showMessage(
+      "You've successfully created your account, please login first and enjoy!",
+      NotificationTypeEnum.SUCCESS
+    );
     router.replace('/login');
   };
 
@@ -77,14 +85,14 @@ export const useRegister = () => {
       onRegistSuccess();
     },
     onError: error => {
-      errorMessage.value = error?.message || `Error occured when hit ${API_ROUTES.AUTH.REGISTER}`;
+      const message = error?.message || `Error occured when hit ${API_ROUTES.AUTH.REGISTER}`;
+      notificationStore.showMessage(message, NotificationTypeEnum.ERROR);
     }
   });
 
   return {
     onRegistUser,
     isLoading: mutation.isPending,
-    isError: mutation.isError,
-    errorMessage
+    isError: mutation.isError
   };
 };

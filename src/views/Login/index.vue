@@ -5,7 +5,7 @@ import { useLogin } from '@/composables/useAuth';
 
 import LoginForm from './components/LoginForm/index.vue';
 
-const { onLoginUser, isError, isLoading, errorMessage } = useLogin();
+const { onLoginUser, isLoading } = useLogin();
 </script>
 
 <template>
@@ -14,7 +14,6 @@ const { onLoginUser, isError, isLoading, errorMessage } = useLogin();
 
     <div class="flex-auto flex flex-col justify-center gap-2">
       <h2 class="text-white">Welcome Back 👋</h2>
-      <p v-if="isError" class="text-danger">{{ errorMessage }}</p>
       <LoginForm :is-loading="isLoading" :on-submit-login="onLoginUser" />
     </div>
 

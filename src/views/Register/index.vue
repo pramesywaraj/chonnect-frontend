@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
 
+import { useRegister } from '@/composables/useAuth';
+
 import RegisterForm from './components/RegisterForm/index.vue';
+
+const { onRegistUser, isLoading } = useRegister();
 </script>
 
 <template>
@@ -13,7 +17,7 @@ import RegisterForm from './components/RegisterForm/index.vue';
         <h2>Welcome 🙌</h2>
         <p>Register to connect with others, cheers!</p>
       </div>
-      <RegisterForm />
+      <RegisterForm :is-loading="isLoading" :on-submit-regist="onRegistUser" />
     </div>
 
     <div class="flex justify-center">

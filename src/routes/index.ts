@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
 
+import { useUserStore } from '@/stores/user';
+
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/welcome',
@@ -53,6 +55,21 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+});
+
+router.beforeEach((to, _, next) => {
+  const userStore = useUserStore();
+  const isLoggedIn = !!userStore.accessToken;
+
+  if (!isLoggedIn && to.path !== '/login' && to.path !== '/register') {
+    return next('/login');
+  }
+
+  if (isLoggedIn && (to.path === '/login' || to.path === '/register')) {
+    return next('/');
+  }
+
+  return next();
 });
 
 export default router;

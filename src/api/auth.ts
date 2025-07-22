@@ -32,3 +32,22 @@ export const register = async (request: IRegisterRequest): Promise<IRegisterResp
     } as IErrorResponse;
   }
 };
+
+export const refreshToken = async (refresh_token: string): Promise<ILoginResponse> => {
+  try {
+    const response = await api.post<ISuccessResponse<ILoginResponse>>(API_ROUTES.AUTH.REFRESH_TOKEN, undefined, {
+      headers: { Authorization: `Bearer ${refresh_token}` },
+      skipAuth: true
+    });
+    return response.data.data;
+  } catch (error) {
+    const err = error as IErrorResponse;
+
+    if (err.message && err.status_code && err.path && err.timestamp) throw err;
+
+    throw {
+      message: `Error occured when hit ${API_ROUTES.AUTH.REFRESH_TOKEN}`,
+      path: API_ROUTES.AUTH.REFRESH_TOKEN
+    } as IErrorResponse;
+  }
+};

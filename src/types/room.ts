@@ -19,3 +19,8 @@ export interface Room {
   participants: Participant[];
   last_message: Message | null;
 }
+
+export interface FetchRoomsParam {
+  limit?: number;
+  before?: string | undefined;
+}

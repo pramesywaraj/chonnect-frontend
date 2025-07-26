@@ -7,5 +7,9 @@ export default {
   USER: {
     PROFILE: '/user/profile',
     OTHER: (userId: string) => `/user/${userId}`
+  },
+  ROOM: {
+    FETCH_ROOMS: '/room',
+    FETCH_ROOM_DETAIL: (roomId: string) => `/room/${roomId}`
   }
 };

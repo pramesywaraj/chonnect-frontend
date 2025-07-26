@@ -13,3 +13,9 @@ export interface IErrorResponse {
   title: string;
   status_code: number;
 }
+
+export interface CursorPagination<T> {
+  data: T[];
+  has_more: boolean;
+  next_cursor?: string | null;
+}

@@ -24,7 +24,7 @@ const roomName = computed(() => props.room.name);
 const roomCreatedAt = computed(() => props.room.created_at);
 const latestMessage = computed(() => props.room.last_message);
 
-const isReaded = computed(() => latestMessage.value?.statuses.some(status => status.status === MessageStatusEnum.READ));
+const isReaded = computed(() => latestMessage.value?.statuses.some(status => status.name === MessageStatusEnum.READ));
 const isNoMessage = computed(() => !latestMessage.value);
 const isMessageReaded = computed(() => (isReaded.value ? 'text-text-secondary' : 'text-text-primary'));
 const latestMessageContent = computed(() => latestMessage.value?.content);
@@ -43,8 +43,8 @@ const latestMessageTime = computed(() => {
 
 <template>
   <div class="flex gap-3 cursor-pointer" @click="onNavigateToRoom(room)">
-    <ProfileImage :name="roomName" :image-url="latestMessage?.sender?.profile_image" />
-    <div class="flex flex-auto flex-col justify-between">
+    <ProfileImage :name="roomName" :image-url="latestMessage?.sender?.profile_image ?? ''" />
+    <div class="flex flex-auto flex-col gap-0.5 justify-center">
       <p class="font-semibold text-primary">{{ roomName }}</p>
       <p v-if="isNoMessage" class="text-sm text-text-secondary italic">chat to start the conversation</p>
       <p v-else :class="['text-sm', isMessageReaded]">{{ latestMessageContent }}</p>

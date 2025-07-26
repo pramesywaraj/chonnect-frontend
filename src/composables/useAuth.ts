@@ -17,7 +17,7 @@ export const useLogin = () => {
   const router = useRouter();
   const isProfileLoading = ref(false);
 
-  const { refetch: fetchUserProfile } = useFetchProfile({ enabled: false });
+  const { refetch: fetchUserProfile } = useFetchProfile({ enabled: false, refetchOnWindowFocus: false });
 
   const onLoginUser = (payload: ILoginRequest) => {
     mutation.mutate(payload);

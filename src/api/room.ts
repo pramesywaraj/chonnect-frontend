@@ -22,7 +22,7 @@ export const fetchRooms = async (params: FetchRoomsParam): Promise<CursorPaginat
 
 export const fetchRoomDetail = async (roomId: string) => {
   try {
-    const response = await api.get<ISuccessResponse<Room[]>>(API_ROUTES.ROOM.FETCH_ROOM_DETAIL(roomId));
+    const response = await api.get<ISuccessResponse<Room>>(API_ROUTES.ROOM.FETCH_ROOM_DETAIL(roomId));
     return response.data.data;
   } catch (error) {
     const err = error as IErrorResponse;

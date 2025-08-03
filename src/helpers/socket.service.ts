@@ -6,6 +6,7 @@ import { env } from '@/constants/env';
 import { MESSAGE_SOCKET, ROOM_SOCKET } from '@/enums/socket';
 import type { Message } from '@/types/message';
 import type { Room } from '@/types/room';
+import { ref } from 'vue';
 
 class SocketService {
   private socket: Socket | null = null;
@@ -13,6 +14,7 @@ class SocketService {
   private notificationStore = useNotificationStore();
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
+  private _isConnected = ref(false);
 
   connect() {
     if (this.socket?.connected) return;
@@ -42,12 +44,15 @@ class SocketService {
     if (!this.socket) return;
 
     this.socket.on('connect', () => {
-      console.log('Socket connected:', this.socket?.id);
+      console.log('Socket connected:', this.socket?.id, this.socket?.connected);
+      this._isConnected.value = true;
       this.reconnectAttempts = 0;
     });
 
     this.socket.on('disconnect', reason => {
       console.log('Socket disconnected:', reason);
+
+      this._isConnected.value = false;
 
       if (reason === 'io server disconnect') {
         this.socket?.connect();
@@ -56,6 +61,7 @@ class SocketService {
 
     this.socket.on('connect_error', error => {
       console.error('Socket connection error:', error);
+      this._isConnected.value = false;
       this.reconnectAttempts++;
 
       if (this.reconnectAttempts >= this.maxReconnectAttempts) {
@@ -65,6 +71,7 @@ class SocketService {
 
     this.socket.on('reconnect', attemptNumber => {
       console.log('Socket reconnected after', attemptNumber, 'attempts');
+      this._isConnected.value = true;
     });
   }
 
@@ -120,11 +127,15 @@ class SocketService {
   }
 
   isConnected(): boolean {
-    return this.socket?.connected || false;
+    return this._isConnected.value;
   }
 
   getSocketId(): string | undefined {
     return this.socket?.id;
+  }
+
+  get connectionState() {
+    return this._isConnected;
   }
 }
 

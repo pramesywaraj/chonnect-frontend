@@ -20,3 +20,8 @@ export interface Message {
   is_user_message: boolean;
   created_at: string;
 }
+
+export interface ISendMessageRequest {
+  room_id: string;
+  content: string;
+}

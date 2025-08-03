@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import dayjs from 'dayjs';
 import isToday from 'dayjs/plugin/isToday';
 import isYesterday from 'dayjs/plugin/isYesterday';
@@ -11,7 +11,10 @@ import ChatBubble from '../ChatBubble/index.vue';
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
 
-const props = defineProps<{ messages: Message[] }>();
+const props = defineProps<{ messages: Message[]; hasMore?: boolean; isLoadingMore?: boolean }>();
+const emit = defineEmits<{ loadMore: [] }>();
+
+const chatContainer = ref<HTMLElement>();
 
 const sortedMessages = computed(() =>
   [...props.messages].sort((a, b) => dayjs(a.created_at).unix() - dayjs(b.created_at).unix())
@@ -44,10 +47,46 @@ const isLastMessage = (idx: number) => {
   // Otherwise, not the last in the group
   return false;
 };
+
+const scrollToBottom = () => {
+  if (chatContainer.value) chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+};
+
+const handleScroll = () => {
+  if (!chatContainer.value) return;
+
+  const { scrollTop } = chatContainer.value;
+
+  if (scrollTop < 100 && props.hasMore && !props.isLoadingMore) emit('loadMore');
+};
+
+watch(
+  sortedMessages,
+  () => {
+    nextTick(() => {
+      scrollToBottom();
+    });
+  },
+  { deep: true }
+);
+
+// Scroll to bottom on mount
+onMounted(() => {
+  nextTick(() => {
+    scrollToBottom();
+  });
+});
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto px-4 py-2 flex flex-col gap-4">
+  <div ref="chatContainer" class="flex-1 overflow-y-auto px-4 py-2 flex flex-col gap-4" @scroll="handleScroll">
+    <!-- Load more indicator -->
+    <div v-if="isLoadingMore" class="text-center text-text-secondary text-sm py-2">Loading more messages...</div>
+
+    <!-- Load more button -->
+    <div v-if="hasMore && !isLoadingMore" class="text-center py-2">
+      <button class="text-primary text-sm hover:underline" @click="emit('loadMore')">Load more messages</button>
+    </div>
     <!-- chat section -->
     <div class="flex flex-col gap-4">
       <template v-for="(message, idx) in sortedMessages" :key="message.id">

@@ -1,52 +1,90 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { PhPaperPlaneRight } from '@phosphor-icons/vue';
 
 import Navbar from '@components/Navbar/index.vue';
 import { TextAreaInput } from '@/components/Inputs';
 import { IconedButton } from '@/components/Buttons';
-import type { Message } from '@/types/message';
-import type { Room } from '@/types/room';
 import { useBackNavigation } from '@/composables/useBackNavigation';
 
 import ChatBody from './components/ChatBody/index.vue';
 
-import ChatData from './__mock__/chat-data';
-import RoomData from './__mock__/room';
+import { useChatRoom } from '@/composables/useChatRoom';
+import { useFetchRoomDetail } from '@/composables/useRoom';
 
 const router = useRouter();
-const roomId = useRoute().params.roomId as string;
-const userId = '49cdfbdc-c1fe-4ece-a235-4a25890c8a31';
+const route = useRoute();
+const roomId = computed(() => route.params.roomId as string);
 const backNavigation = useBackNavigation();
 
-const data = ref<Message[]>(ChatData);
-const room = ref<Room>(RoomData);
+const {
+  messages,
+  messageInput,
+  userId,
+  handleInputChange,
+  handleSendMessage,
+  loadMoreMessages,
+  isCanSendMessage,
+  isConnected,
+  isFetchingMessages,
+  isFetchingNextPage,
+  hasNextPage
+} = useChatRoom(roomId);
+const { data: room, isLoading: isFetchingRoomDetailLoading } = useFetchRoomDetail(roomId.value, {
+  enabled: !!roomId.value
+});
 
 const navigateToProfile = () => {
+  if (!room.value) return;
+
   if (room.value.is_group) return router.push(`/profile/group/${room.value.id}`);
 
   const partner = room.value.participants.filter(user => user.id !== userId)[0];
 
   router.push(`/profile/user/${partner?.id}`);
 };
+
+const isLoading = computed(() => isFetchingRoomDetailLoading.value || isFetchingMessages.value);
 </script>
 
 <template>
   <div class="bg-background flex-auto flex flex-col h-screen">
     <Navbar
-      :title="room.name"
+      :title="room?.name ?? ''"
       :is-enable-back-button="true"
       @click-back-button="backNavigation.goBack"
       @click-navbar="navigateToProfile"
     />
-    <ChatBody :messages="data" />
+
+    <div v-if="isLoading" class="flex-1 flex items-center justify-center">
+      <div class="text-text-secondary">Loading messages...</div>
+    </div>
+
+    <ChatBody
+      :messages="messages"
+      :has-more="hasNextPage"
+      :is-loading-more="isFetchingNextPage"
+      @load-more="loadMoreMessages"
+    />
+
+    <!-- Connection status indicator -->
+    <div v-if="!isConnected" class="px-4 py-1 text-sm text-red-500 bg-red-50">Connecting to chat...</div>
 
     <div class="bg-primary p-2 flex items-center shrink-0 gap-3">
-      <TextAreaInput placeholder="Write your message here..." container-class="mb-0! w-full" :initial-height="24" />
+      <TextAreaInput
+        v-model="messageInput"
+        placeholder="Write your message here..."
+        container-class="mb-0! w-full"
+        :initial-height="24"
+        @input="handleInputChange"
+        @keydown.enter.prevent="handleSendMessage"
+      />
       <IconedButton
         :icon="{ src: PhPaperPlaneRight, size: 28, weight: 'bold', class: 'text-primary' }"
         wrapper-class="bg-white p-2.5"
+        :disabled="!isCanSendMessage"
+        @click="handleSendMessage"
       />
     </div>
   </div>

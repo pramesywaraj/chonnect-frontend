@@ -5,7 +5,7 @@ import { queryKeys } from '@/constants/query';
 import { User } from '@/types/user';
 import { CommonUseQueryOptions } from '@/types/vue-query';
 
-export const useFetchProfile = (options?: CommonUseQueryOptions<User, User>) => {
+export const useFetchProfile = (options?: CommonUseQueryOptions<User>) => {
   return useQuery({
     queryKey: queryKeys.user_profile(),
     queryFn: fetchProfile,

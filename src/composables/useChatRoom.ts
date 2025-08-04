@@ -62,10 +62,6 @@ export const useChatRoom = (roomId: ComputedRef<string>) => {
     sendMessageMutation.mutate(content);
   };
 
-  const handleInputChange = (value: string) => {
-    messageInput.value = value;
-  };
-
   const loadMoreMessages = () => {
     if (hasNextPage.value && !isFetchingMessages.value) fetchNextPage();
   };
@@ -87,12 +83,14 @@ export const useChatRoom = (roomId: ComputedRef<string>) => {
   const addMessage = (message: Message) => {
     const existingMessage = messages.value.find(m => m.id === message.id);
     if (!existingMessage) {
+      message.is_user_message = message.sender.id === userStore.user?.id;
       messages.value.push(message);
     }
   };
 
   const setupEventListeners = () => {
     socketService.onMessage((message: Message) => {
+      console.log('CHECK NEW MESSAGE', message);
       addMessage(message);
     });
 
@@ -106,12 +104,37 @@ export const useChatRoom = (roomId: ComputedRef<string>) => {
     socketService.off(ROOM_SOCKET.ROOM_LAST_MESSAGE_UPDATE);
   };
 
+  // Watch for roomId changes to join/leave rooms
+  watch(roomId, (newRoomId, oldRoomId) => {
+    if (oldRoomId) {
+      console.log(`Leaving room: ${oldRoomId}`);
+      socketService.leaveRoom(oldRoomId);
+    }
+    if (newRoomId) {
+      console.log(`Joining room: ${newRoomId}`);
+      socketService.joinRoom(newRoomId);
+    }
+  });
+
+  // Watch for connection state and join room when connected
+  watch(socketService.connectionState, isConnected => {
+    if (isConnected && roomId.value) {
+      console.log('Socket connected, joining room:', roomId.value);
+      socketService.joinRoom(roomId.value);
+    }
+  });
+
   onMounted(() => {
     connect();
     setupEventListeners();
   });
 
   onUnmounted(() => {
+    if (roomId.value) {
+      console.log(`Leaving room on unmount: ${roomId.value}`);
+      socketService.leaveRoom(roomId.value);
+    }
+
     cleanupEventListeners();
     disconnect();
   });
@@ -123,7 +146,6 @@ export const useChatRoom = (roomId: ComputedRef<string>) => {
     messageInput,
     roomId,
     userId: userStore.user?.id,
-    handleInputChange,
     handleSendMessage,
     loadMoreMessages,
     isCanSendMessage,

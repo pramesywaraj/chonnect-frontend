@@ -22,7 +22,6 @@ const {
   messages,
   messageInput,
   userId,
-  handleInputChange,
   handleSendMessage,
   loadMoreMessages,
   isCanSendMessage,
@@ -32,7 +31,8 @@ const {
   hasNextPage
 } = useChatRoom(roomId);
 const { data: room, isLoading: isFetchingRoomDetailLoading } = useFetchRoomDetail(roomId.value, {
-  enabled: !!roomId.value
+  enabled: !!roomId.value,
+  refetchOnWindowFocus: false
 });
 
 const navigateToProfile = () => {
@@ -77,7 +77,6 @@ const isLoading = computed(() => isFetchingRoomDetailLoading.value || isFetching
         placeholder="Write your message here..."
         container-class="mb-0! w-full"
         :initial-height="24"
-        @input="handleInputChange"
         @keydown.enter.prevent="handleSendMessage"
       />
       <IconedButton

@@ -23,6 +23,6 @@ export const useFetchRoomDetail = (roomId: string, options?: CommonUseQueryOptio
   return useQuery({
     queryKey: queryKeys.room_detail(roomId),
     queryFn: () => fetchRoomDetail(roomId),
-    ...options
+    ...options,
   });
 };

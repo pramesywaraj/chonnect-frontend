@@ -88,6 +88,7 @@ class SocketService {
       return;
     }
 
+    console.log(`Joining room: ${roomId}`);
     this.socket.emit(ROOM_SOCKET.ROOM_JOIN, roomId);
   }
 

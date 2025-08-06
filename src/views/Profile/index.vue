@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { useQueryClient } from '@tanstack/vue-query';
 
 import Navbar from '@components/Navbar/index.vue';
 import { ProfileImage } from '@components/Images';
@@ -8,20 +9,25 @@ import { RegularButton } from '@components/Buttons';
 
 import { useBackNavigation } from '@composables/useBackNavigation';
 import { Participant } from '@/types/room';
+import { useUserStore } from '@/stores/user';
 
 import DescriptionFields from './components/DescriptionFields/index.vue';
-import { mockCurrentUser, mockOtherUser, mockRoom } from './__mock__';
+import { mockOtherUser, mockRoom } from './__mock__';
+import useSignOut from './composable/useSignOut';
 
 interface DataType {
   name: string;
-  description?: string;
+  description?: string | undefined;
   email?: string | undefined;
   profile_image?: string | undefined;
-  participants?: Participant[];
+  participants?: Participant[] | undefined;
 }
 
 const { goBack } = useBackNavigation();
 const route = useRoute();
+const userStore = useUserStore();
+const { signOut } = useSignOut();
+const queryClient = useQueryClient();
 
 const profileType = computed<'group' | 'otherUser' | 'currentUser'>(() => {
   if (route.path.startsWith('/profile/group/')) return 'group';
@@ -40,15 +46,24 @@ const data = computed<DataType>(() => {
       name: mockOtherUser.name,
       description: mockOtherUser.description,
       email: mockOtherUser.email,
-      profile_image: mockOtherUser.profile_image
+      profile_image: mockOtherUser.profile_image || ''
     };
+
+  const user = userStore.user;
+
   return {
-    name: mockCurrentUser.name,
-    description: mockCurrentUser.description,
-    email: mockCurrentUser.email,
-    profile_image: mockCurrentUser.profile_image
+    name: user?.name || '',
+    description: user?.description,
+    email: user?.email,
+    profile_image: user?.profile_image || ''
   };
 });
+
+const handleSignOut = async () => {
+  await queryClient.clear();
+
+  signOut();
+};
 </script>
 
 <template>
@@ -65,6 +80,7 @@ const data = computed<DataType>(() => {
         type="button"
         size="large"
         class-name="w-full !text-danger"
+        @click="handleSignOut"
         >Sign Out</RegularButton
       >
       <RegularButton

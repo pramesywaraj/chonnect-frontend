@@ -90,7 +90,6 @@ export const useChatRoom = (roomId: ComputedRef<string>) => {
 
   const setupEventListeners = () => {
     socketService.onMessage((message: Message) => {
-      console.log('CHECK NEW MESSAGE', message);
       addMessage(message);
     });
 

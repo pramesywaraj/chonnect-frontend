@@ -10,6 +10,7 @@ export default {
     OTHER: (userId: string) => `/user/${userId}`
   },
   ROOM: {
+    CREATE_ROOM: '/room',
     FETCH_ROOMS: '/room',
     FETCH_ROOM_DETAIL: (roomId: string) => `/room/${roomId}`
   },

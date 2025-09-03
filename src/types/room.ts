@@ -24,3 +24,15 @@ export interface FetchRoomsParam {
   limit?: number;
   before?: string | undefined;
 }
+
+export interface ICreateRoomRequest {
+  participant_ids: string[];
+  name?: string;
+}
+
+export interface ICreateRoomResponse {
+  id: string;
+  name: string | null;
+  is_group: boolean;
+  created_at: string;
+}

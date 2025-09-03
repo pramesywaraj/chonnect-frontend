@@ -9,8 +9,9 @@ defineProps<{
   hasMore?: boolean;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   scroll: [event: Event];
+  selectUser: [user: User];
 }>();
 
 const vRipple = {
@@ -30,6 +31,10 @@ const vRipple = {
     });
   }
 };
+
+const handleSelectUser = (user: User) => {
+  emit('selectUser', user);
+};
 </script>
 
 <template>
@@ -39,6 +44,7 @@ const vRipple = {
       :key="user.id"
       v-ripple
       class="flex items-center gap-2 cursor-pointer hover:bg-gray-100 rounded-l-2xl rounded-r-lg relative overflow-hidden select-none py-2 min-h-[56px]"
+      @click="handleSelectUser(user)"
     >
       <ProfileImage :name="user.name" :image-url="user?.profile_image || ''" />
       <div class="flex flex-col gap-1">

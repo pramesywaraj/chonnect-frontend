@@ -39,7 +39,7 @@ const handleCancel = () => {
 };
 
 const handleBackdropClick = (event: MouseEvent) => {
-  if (event.target === event.currentTarget) {
+  if (event.target === event.currentTarget && !props.loading) {
     emit('close');
   }
 };

@@ -5,6 +5,7 @@ export default {
     REFRESH_TOKEN: '/auth/refresh'
   },
   USER: {
+    ALL: '/user/all',
     PROFILE: '/user/profile',
     OTHER: (userId: string) => `/user/${userId}`
   },

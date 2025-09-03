@@ -12,6 +12,24 @@ defineProps<{
 defineEmits<{
   scroll: [event: Event];
 }>();
+
+const vRipple = {
+  mounted(el: HTMLElement) {
+    el.style.position = el.style.position || 'relative';
+    el.style.overflow = 'hidden';
+    el.addEventListener('click', (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple-effect';
+      ripple.style.width = ripple.style.height = `${size}px`;
+      ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+      ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+      el.appendChild(ripple);
+      ripple.addEventListener('animationend', () => ripple.remove());
+    });
+  }
+};
 </script>
 
 <template>
@@ -19,7 +37,8 @@ defineEmits<{
     <div
       v-for="user in users"
       :key="user.id"
-      class="flex items-center gap-2 cursor-pointer hover:bg-gray-100 rounded-l-2xl rounded-r-lg"
+      v-ripple
+      class="flex items-center gap-2 cursor-pointer hover:bg-gray-100 rounded-l-2xl rounded-r-lg relative overflow-hidden select-none py-2 min-h-[56px]"
     >
       <ProfileImage :name="user.name" :image-url="user?.profile_image || ''" />
       <div class="flex flex-col gap-1">
@@ -34,3 +53,21 @@ defineEmits<{
     </div>
   </div>
 </template>
+
+<style scoped>
+:deep(.ripple-effect) {
+  position: absolute;
+  border-radius: 9999px;
+  transform: scale(0);
+  background: rgba(0, 0, 0, 0.12);
+  animation: ripple 500ms ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+</style>

@@ -7,18 +7,21 @@ import Navbar from '@components/Navbar/index.vue';
 import TextInput from '@components/Inputs/TextInput/index.vue';
 import { useBackNavigation } from '@composables/useBackNavigation';
 import ConfirmationPopUp from '@components/Popup/ConfirmationPopUp/index.vue';
+import { User } from '@/types/user';
 
 import UserList from './components/UserList/index.vue';
 import EmptyState from './components/EmptyState/index.vue';
 import { useUserSearch } from './composables/useUserSearch';
-import { User } from '@/types/user';
+import useCreateRoom from './composables/useCreateRoom';
+import { ICreateRoomRequest } from '@/types/room';
 
 const { goBack } = useBackNavigation();
 const { allUsers, isLoading, isFetchingNextPage, hasNextPage, handleSearch, loadMore, resetSearch } = useUserSearch();
+const { isLoading: isCreatingRoom, onCreateRoom } = useCreateRoom(() => handleClosePopUp());
 
 const search = ref('');
 const showConfirm = ref(false);
-const selectedName = ref('');
+const selectedUser = ref<User | null>(null);
 
 const debouncedSearch = debounce(async (searchTerm: string) => {
   await handleSearch(searchTerm);
@@ -38,12 +41,22 @@ const handleScroll = (event: Event) => {
 
 const handleSelectUser = (user: User) => {
   showConfirm.value = true;
-  selectedName.value = user.name;
+  selectedUser.value = user;
+};
+
+const handleConfirm = () => {
+  if (!selectedUser.value) return;
+  // handle 1-o-1 room
+  const payload: ICreateRoomRequest = {
+    participant_ids: [selectedUser.value?.id]
+  };
+
+  onCreateRoom(payload);
 };
 
 const handleClosePopUp = () => {
   showConfirm.value = false;
-  selectedName.value = '';
+  selectedUser.value = null;
 };
 </script>
 
@@ -72,8 +85,9 @@ const handleClosePopUp = () => {
 
   <ConfirmationPopUp
     :is-open="showConfirm"
-    :message="`Are you sure you want to chat with ${selectedName}?`"
-    :loading="true"
+    :message="`Are you sure you want to chat with ${selectedUser?.name}?`"
+    :loading="isCreatingRoom"
     @close="handleClosePopUp"
+    @confirm="handleConfirm"
   />
 </template>

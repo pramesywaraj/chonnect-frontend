@@ -12,7 +12,7 @@ export function useUserSearch() {
 
   const searchParams = computed<FetchUsersParams>(() => {
     const params: FetchUsersParams = {
-      limit: 11
+      limit: 10
     };
 
     if (searchQuery.value.trim()) {

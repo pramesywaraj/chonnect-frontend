@@ -66,20 +66,6 @@ export const useChatRoom = (roomId: ComputedRef<string>) => {
     if (hasNextPage.value && !isFetchingMessages.value) fetchNextPage();
   };
 
-  // Realtime things
-  const connect = () => {
-    if (!userStore.accessToken) {
-      console.error('No access token available');
-      return;
-    }
-
-    socketService.connect();
-  };
-
-  const disconnect = () => {
-    socketService.disconnect();
-  };
-
   const addMessage = (message: Message) => {
     const existingMessage = messages.value.find(m => m.id === message.id);
     if (!existingMessage) {
@@ -104,16 +90,20 @@ export const useChatRoom = (roomId: ComputedRef<string>) => {
   };
 
   // Watch for roomId changes to join/leave rooms
-  watch(roomId, (newRoomId, oldRoomId) => {
-    if (oldRoomId) {
-      console.log(`Leaving room: ${oldRoomId}`);
-      socketService.leaveRoom(oldRoomId);
-    }
-    if (newRoomId) {
-      console.log(`Joining room: ${newRoomId}`);
-      socketService.joinRoom(newRoomId);
-    }
-  });
+  watch(
+    roomId,
+    (newRoomId, oldRoomId) => {
+      if (oldRoomId) {
+        console.log(`Leaving room: ${oldRoomId}`);
+        socketService.leaveRoom(oldRoomId);
+      }
+      if (newRoomId) {
+        console.log(`Joining room: ${newRoomId}`);
+        socketService.joinRoom(newRoomId);
+      }
+    },
+    { immediate: true }
+  );
 
   // Watch for connection state and join room when connected
   watch(socketService.connectionState, isConnected => {
@@ -124,18 +114,17 @@ export const useChatRoom = (roomId: ComputedRef<string>) => {
   });
 
   onMounted(() => {
-    connect();
     setupEventListeners();
   });
 
   onUnmounted(() => {
+    console.log('CHECK UNMOUNT');
     if (roomId.value) {
       console.log(`Leaving room on unmount: ${roomId.value}`);
       socketService.leaveRoom(roomId.value);
     }
 
     cleanupEventListeners();
-    disconnect();
   });
 
   const isCanSendMessage = computed(() => messageInput.value.trim() && !sendMessageMutation.isPending.value);

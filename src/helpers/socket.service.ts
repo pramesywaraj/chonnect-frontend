@@ -10,11 +10,17 @@ import { ref } from 'vue';
 
 class SocketService {
   private socket: Socket | null = null;
-  private userStore = useUserStore();
-  private notificationStore = useNotificationStore();
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private _isConnected = ref(false);
+
+  private get userStore() {
+    return useUserStore();
+  }
+
+  private get notificationStore() {
+    return useNotificationStore();
+  }
 
   connect() {
     if (this.socket?.connected) return;

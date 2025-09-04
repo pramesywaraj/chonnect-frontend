@@ -11,8 +11,6 @@ const useCreateRoom = (onErrorCallback?: () => void) => {
   const router = useRouter();
 
   const onCreateSuccess = (response: ICreateRoomResponse) => {
-    notificationStore.showMessage(`Enjoy chonnect with ${response.name}`, NotificationTypeEnum.SUCCESS);
-
     router.replace(`/room/${response.id}`);
   };
 

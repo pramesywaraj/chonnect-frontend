@@ -5,6 +5,8 @@ import isToday from 'dayjs/plugin/isToday';
 import isYesterday from 'dayjs/plugin/isYesterday';
 
 import type { Message } from '@/types/message';
+import LottieAnimation from '@/components/LottieAnimation/index.vue';
+import ChatLoadingAnimation from '@/assets/animations/empty-chat-room.json';
 
 import ChatBubble from '../ChatBubble/index.vue';
 
@@ -87,8 +89,24 @@ onMounted(() => {
     <div v-if="hasMore && !isLoadingMore" class="text-center py-2">
       <button class="text-primary text-sm hover:underline" @click="emit('loadMore')">Load more messages</button>
     </div>
+
+    <div v-if="messages.length === 0" class="justify-center flex flex-col flex-1 items-center gap-1">
+      <LottieAnimation
+        :animation-data="ChatLoadingAnimation"
+        :loop="true"
+        :autoplay="true"
+        width="192"
+        height="192"
+        class="opacity-80"
+      />
+      <div class="max-w-[80%]">
+        <p class="text-center text-secondary">No messages yet...</p>
+        <p class="text-center text-secondary">Chat to start chonnecting!</p>
+      </div>
+    </div>
+
     <!-- chat section -->
-    <div class="flex flex-col gap-4">
+    <div v-else class="flex flex-col gap-4">
       <template v-for="(message, idx) in sortedMessages" :key="message.id">
         <div
           v-if="

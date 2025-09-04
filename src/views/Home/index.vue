@@ -33,7 +33,7 @@ const onNavigateToRoom = (room: Room) => {
 
 <template>
   <div class="bg-background flex-auto flex flex-col">
-    <Navbar title="Messages">
+    <Navbar title="Chat">
       <template #right-content>
         <IconedButton
           :icon="{ src: PhChatCircleDots, size: 28, weight: 'bold', class: 'text-white' }"

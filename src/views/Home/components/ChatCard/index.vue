@@ -43,14 +43,20 @@ const latestMessageTime = computed(() => {
 
 <template>
   <div class="flex gap-3 cursor-pointer" @click="onNavigateToRoom(room)">
-    <ProfileImage :name="roomName" :image-url="latestMessage?.sender?.profile_image ?? ''" />
-    <div class="flex flex-auto flex-col gap-0.5 justify-center">
-      <p class="font-semibold text-primary">{{ roomName }}</p>
-      <p v-if="isNoMessage" class="text-sm text-text-secondary italic">chat to start the conversation</p>
-      <p v-else :class="['text-sm', isMessageReaded]">{{ latestMessageContent }}</p>
+    <div class="flex-1">
+      <ProfileImage :name="roomName" :image-url="latestMessage?.sender?.profile_image ?? ''" />
     </div>
-    <div class="flex flex-col items-start">
-      <p class="text-xs text-text-secondary">{{ latestMessageTime }}</p>
+    <div class="flex items-center gap-3 min-w-0 w-full">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <p class="font-semibold text-primary truncate">{{ roomName }}</p>
+          <span class="ml-auto shrink-0 text-xs text-text-secondary">{{ latestMessageTime }}</span>
+        </div>
+        <p v-if="isNoMessage" class="text-sm text-text-secondary italic">chat to start the conversation</p>
+        <p v-else :class="['text-sm truncate', isMessageReaded]">
+          {{ latestMessageContent }}
+        </p>
+      </div>
     </div>
   </div>
 </template>

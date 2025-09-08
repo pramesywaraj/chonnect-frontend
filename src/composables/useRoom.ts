@@ -15,7 +15,8 @@ export const useFetchRooms = () => {
         before: pageParam ?? undefined
       }),
     initialPageParam: null,
-    getNextPageParam: (lastPage: CursorPagination<Room>) => lastPage.next_cursor ?? null
+    getNextPageParam: (lastPage: CursorPagination<Room>) => lastPage.next_cursor ?? null,
+    refetchOnWindowFocus: false
   });
 };
 
@@ -23,6 +24,6 @@ export const useFetchRoomDetail = (roomId: string, options?: CommonUseQueryOptio
   return useQuery({
     queryKey: queryKeys.room_detail(roomId),
     queryFn: () => fetchRoomDetail(roomId),
-    ...options,
+    ...options
   });
 };

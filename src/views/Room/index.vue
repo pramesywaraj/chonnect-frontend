@@ -6,12 +6,12 @@ import { PhPaperPlaneRight } from '@phosphor-icons/vue';
 import Navbar from '@components/Navbar/index.vue';
 import { TextAreaInput } from '@/components/Inputs';
 import { IconedButton } from '@/components/Buttons';
+
 import { useBackNavigation } from '@/composables/useBackNavigation';
-
-import ChatBody from './components/ChatBody/index.vue';
-
 import { useChatRoom } from '@/composables/useChatRoom';
 import { useFetchRoomDetail } from '@/composables/useRoom';
+
+import ChatBody from './components/ChatBody/index.vue';
 
 const router = useRouter();
 const route = useRoute();

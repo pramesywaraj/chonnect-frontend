@@ -78,10 +78,6 @@ export const useChatRoom = (roomId: ComputedRef<string>) => {
     socketService.onMessage((message: Message) => {
       addMessage(message);
     });
-
-    socketService.onRoomLastMessageUpdate((data: Room) => {
-      console.log('Room last message updated:', data);
-    });
   };
 
   const cleanupEventListeners = () => {
@@ -118,7 +114,6 @@ export const useChatRoom = (roomId: ComputedRef<string>) => {
   });
 
   onUnmounted(() => {
-    console.log('CHECK UNMOUNT');
     if (roomId.value) {
       console.log(`Leaving room on unmount: ${roomId.value}`);
       socketService.leaveRoom(roomId.value);

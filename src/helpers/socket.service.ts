@@ -3,7 +3,7 @@ import { type Socket, io } from 'socket.io-client';
 import { NotificationTypeEnum, useNotificationStore } from '@/stores/notification';
 import { useUserStore } from '@/stores/user';
 import { env } from '@/constants/env';
-import { MESSAGE_SOCKET, ROOM_SOCKET } from '@/enums/socket';
+import { GENERAL_SOCKET, MESSAGE_SOCKET, ROOM_SOCKET } from '@/enums/socket';
 import type { Message } from '@/types/message';
 import type { Room } from '@/types/room';
 import { ref } from 'vue';
@@ -50,13 +50,17 @@ class SocketService {
     if (!this.socket) return;
 
     this.socket.on('connect', () => {
-      console.log('Socket connected:', this.socket?.id, this.socket?.connected);
+      console.log('Socket connected:', this.socket?.id, this.socket?.connected, this.socket);
       this._isConnected.value = true;
       this.reconnectAttempts = 0;
+
+      this.subscribeToServer();
     });
 
     this.socket.on('disconnect', reason => {
       console.log('Socket disconnected:', reason);
+
+      this.unsubscribeFromServer();
 
       this._isConnected.value = false;
 
@@ -83,9 +87,44 @@ class SocketService {
 
   disconnect() {
     if (this.socket) {
+      this.unsubscribeFromServer();
       this.socket.disconnect();
       this.socket = null;
     }
+  }
+
+  subscribeToServer() {
+    if (!this.socket?.connected) {
+      console.error('Socket not connected');
+      return;
+    }
+
+    const userId = this.userStore.user?.id;
+
+    if (!userId) {
+      console.error('No user id detected');
+      return;
+    }
+
+    console.log(`User ${userId} subscribe to server`);
+    this.socket.emit(GENERAL_SOCKET.USER_SUBSCRIBE_TO_SERVER, userId);
+  }
+
+  unsubscribeFromServer() {
+    if (!this.socket?.connected) {
+      console.error('Socket not connected');
+      return;
+    }
+
+    const userId = this.userStore.user?.id;
+
+    if (!userId) {
+      console.error('No user id detected');
+      return;
+    }
+
+    console.log(`User ${userId} unsubscribe from server`);
+    this.socket.emit(GENERAL_SOCKET.USER_UNSUBSCRIBE_FROM_SERVER, userId);
   }
 
   joinRoom(roomId: string) {
@@ -122,14 +161,19 @@ class SocketService {
     this.socket.on(MESSAGE_SOCKET.NEW_MESSAGE, callback);
   }
 
-  onRoomLastMessageUpdate(callback: (room: Room) => void) {
+  onListenToRoomUpdates(callback: (room: Room) => void) {
     if (!this.socket) return;
-    this.socket.on(ROOM_SOCKET.ROOM_LAST_MESSAGE_UPDATE, callback);
+    this.socket.on(ROOM_SOCKET.ROOM_UPDATED, data => {
+      callback(data);
+    });
   }
 
   // Utility methods
-  off(event: string) {
+  off(event: string, callback?: () => void) {
     if (!this.socket) return;
+
+    callback?.();
+
     this.socket.off(event);
   }
 

@@ -7,16 +7,17 @@ export enum MessageStatusEnum {
 }
 
 export interface MessageStatus {
-  id?: string;
   name: MessageStatusEnum;
-  created_at?: string;
+  read_at: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Message {
   id: string;
   content: string;
   sender: Pick<User, 'id' | 'name' | 'profile_image'>;
-  statuses: MessageStatus[];
+  status: MessageStatus;
   is_user_message: boolean;
   created_at: string;
 }

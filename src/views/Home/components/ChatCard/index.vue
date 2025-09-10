@@ -24,7 +24,7 @@ const roomName = computed(() => props.room.name);
 const roomCreatedAt = computed(() => props.room.created_at);
 const latestMessage = computed(() => props.room.last_message);
 
-const isReaded = computed(() => latestMessage.value?.statuses.some(status => status.name === MessageStatusEnum.READ));
+const isReaded = computed(() => latestMessage.value?.status?.name === MessageStatusEnum.READ);
 const isNoMessage = computed(() => !latestMessage.value);
 const isMessageReaded = computed(() => (isReaded.value ? 'text-text-secondary' : 'text-text-primary'));
 const latestMessageContent = computed(() => latestMessage.value?.content);

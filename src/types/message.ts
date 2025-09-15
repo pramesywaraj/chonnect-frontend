@@ -17,7 +17,7 @@ export interface Message {
   id: string;
   content: string;
   sender: Pick<User, 'id' | 'name' | 'profile_image'>;
-  status: MessageStatus;
+  statuses: MessageStatus[];
   is_user_message: boolean;
   created_at: string;
 }

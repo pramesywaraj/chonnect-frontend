@@ -4,7 +4,7 @@ import { NotificationTypeEnum, useNotificationStore } from '@/stores/notificatio
 import { useUserStore } from '@/stores/user';
 import { env } from '@/constants/env';
 import { GENERAL_SOCKET, MESSAGE_SOCKET, ROOM_SOCKET } from '@/enums/socket';
-import type { Message } from '@/types/message';
+import { type Message } from '@/types/message';
 import type { Room } from '@/types/room';
 import { ref } from 'vue';
 
@@ -108,6 +108,8 @@ class SocketService {
 
     console.log(`User ${userId} subscribe to server`);
     this.socket.emit(GENERAL_SOCKET.USER_SUBSCRIBE_TO_SERVER, userId);
+
+    this.socket.emit(MESSAGE_SOCKET.MARK_ALL_DELIVERED);
   }
 
   unsubscribeFromServer() {
@@ -163,7 +165,10 @@ class SocketService {
 
   onListenToRoomUpdates(callback: (room: Room) => void) {
     if (!this.socket) return;
-    this.socket.on(ROOM_SOCKET.ROOM_UPDATED, data => {
+    this.socket.on(ROOM_SOCKET.ROOM_UPDATED, (data: Room) => {
+      if (data.last_message) {
+        this.socket?.emit(MESSAGE_SOCKET.MARK_AS_DELIVERED, data.last_message.id);
+      }
       callback(data);
     });
   }

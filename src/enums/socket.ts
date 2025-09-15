@@ -2,7 +2,11 @@ export enum MESSAGE_SOCKET {
   NEW_MESSAGE = 'new_message',
   SEND_MESSAGE = 'send_message',
   TYPING = 'typing',
-  STOP_TYPING = 'stop_typing'
+  STOP_TYPING = 'stop_typing',
+
+  // Mark message
+  MARK_ALL_DELIVERED = 'mark_all_delivered',
+  MARK_AS_DELIVERED = 'mark_as_delivered'
 }
 
 export enum ROOM_SOCKET {

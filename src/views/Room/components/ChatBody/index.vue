@@ -121,6 +121,7 @@ onMounted(() => {
           :is-last-message="isLastMessage(idx)"
           :time="dayjs(message.created_at).format('HH:mm')"
           :message="message.content"
+          :message-statuses="message.statuses"
         />
       </template>
     </div>

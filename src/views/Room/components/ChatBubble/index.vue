@@ -1,10 +1,28 @@
 <script lang="ts" setup>
-defineProps<{
+import { PhCheck, PhChecks } from '@phosphor-icons/vue';
+
+import { MessageStatus, MessageStatusEnum } from '@/types/message';
+import { computed } from 'vue';
+
+const props = defineProps<{
   isUser: boolean;
   isLastMessage: boolean;
   time: string;
   message: string;
+  messageStatuses: MessageStatus[];
 }>();
+
+const messageStatus = computed(() => {
+  if (props.messageStatuses.every(item => item.name === MessageStatusEnum.READ)) return MessageStatusEnum.READ;
+  if (props.messageStatuses.every(item => item.name === MessageStatusEnum.DELIVERED))
+    return MessageStatusEnum.DELIVERED;
+
+  return MessageStatusEnum.SENT;
+});
+
+const isShowDoubleChecks = computed(
+  () => messageStatus.value === MessageStatusEnum.DELIVERED || messageStatus.value === MessageStatusEnum.READ
+);
 </script>
 
 <template>
@@ -18,7 +36,15 @@ defineProps<{
       ]"
     >
       <p>{{ message }}</p>
-      <span class="block text-xs opacity-70 text-right">{{ time }}</span>
+      <div class="flex flex-row items-center gap-1.5 justify-end">
+        <PhCheck v-if="isUser && !isShowDoubleChecks" :size="14" />
+        <PhChecks
+          v-else-if="isUser"
+          :size="14"
+          :class="{ 'text-blue-500': messageStatus === MessageStatusEnum.READ }"
+        />
+        <span class="block text-xs opacity-70 text-right">{{ time }}</span>
+      </div>
     </div>
     <div
       v-if="isLastMessage"
